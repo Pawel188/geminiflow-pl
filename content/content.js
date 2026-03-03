@@ -38,10 +38,10 @@ function createToolboxButton() {
     </svg>
     <span>GeminiFlow</span>
   `;
-  button.title = 'Abrir Gemini Toolbox';
-  
+  button.title = 'Otwórz Gemini Toolbox';
+
   button.addEventListener('click', toggleToolbox);
-  
+
   return button;
 }
 
@@ -50,7 +50,7 @@ function createToolboxPanel() {
   const panel = document.createElement('div');
   panel.id = 'gemini-toolbox-panel';
   panel.className = 'gemini-toolbox-panel hidden';
-  
+
   panel.innerHTML = `
     <div class="toolbox-header">
       <h2>GeminiFlow</h2>
@@ -58,67 +58,67 @@ function createToolboxPanel() {
     </div>
     
     <div class="toolbox-tabs">
-      <button class="tab-btn active" data-tab="chats">Gestión de Chats</button>
-      <button class="tab-btn" data-tab="prompts">Mis Prompts</button>
+      <button class="tab-btn active" data-tab="chats">Zarządzanie czatami</button>
+      <button class="tab-btn" data-tab="prompts">Moje prompty</button>
     </div>
     
     <div class="toolbox-content">
       <!-- Tab: Gestión de Chats -->
       <div class="tab-content active" id="tab-chats">
-        <h3>Gestión de Chats</h3>
+        <h3>Zarządzanie czatami</h3>
         
         <!-- Búsqueda de chats -->
         <div class="search-box">
-          <input type="text" id="search-chats" placeholder="🔍 Buscar chats..." class="search-input">
+          <input type="text" id="search-chats" placeholder="🔍 Szukaj czatów..." class="search-input">
           <span id="search-results-count" class="search-count"></span>
         </div>
         
         <!-- Acciones principales -->
         <div class="action-buttons">
-          <button id="select-all-chats" class="btn btn-secondary">Seleccionar Todos</button>
-          <button id="deselect-all-chats" class="btn btn-secondary">Deseleccionar Todos</button>
+          <button id="select-all-chats" class="btn btn-secondary">Zaznacz wszystkie</button>
+          <button id="deselect-all-chats" class="btn btn-secondary">Odznacz wszystkie</button>
         </div>
         
         <!-- Acciones avanzadas -->
         <details class="advanced-actions">
-          <summary>Acciones Avanzadas</summary>
+          <summary>Zaawansowane akcje</summary>
           <div class="advanced-actions-content">
-            <button id="export-chats" class="btn btn-primary">📥 Exportar Seleccionados</button>
-            <button id="rename-chats" class="btn btn-primary">✏️ Renombrar Masivo</button>
-            <button id="delete-selected-chats" class="btn btn-danger">🗑️ Eliminar Seleccionados</button>
+            <button id="export-chats" class="btn btn-primary">📥 Eksportuj zaznaczone</button>
+            <button id="rename-chats" class="btn btn-primary">✏️ Masowa zmiana nazw</button>
+            <button id="delete-selected-chats" class="btn btn-danger">🗑️ Usuń zaznaczone</button>
           </div>
         </details>
         
         <div id="chat-list" class="chat-list">
-          <p class="loading">Cargando chats...</p>
+          <p class="loading">Ładowanie czatów...</p>
         </div>
         
         <div class="chat-stats">
-          <span id="selected-count">0</span> seleccionados | <span id="visible-count">0</span> visibles
+          <span id="selected-count">0</span> zaznaczone | <span id="visible-count">0</span> widoczne
         </div>
       </div>
       
       <!-- Tab: Prompts -->
       <div class="tab-content" id="tab-prompts">
-        <h3>Mis Prompts Guardados</h3>
+        <h3>Moje zapisane prompty</h3>
         
         <!-- Añadir nuevo prompt -->
         <div class="prompt-add">
-          <textarea id="new-prompt-text" placeholder="Escribe tu prompt aquí..." rows="3"></textarea>
-          <input type="text" id="new-prompt-name" placeholder="Nombre del prompt">
+          <textarea id="new-prompt-text" placeholder="Wpisz swój prompt tutaj..." rows="3"></textarea>
+          <input type="text" id="new-prompt-name" placeholder="Nazwa promptu">
           <select id="new-prompt-category" class="category-select">
-            <option value="">Sin categoría</option>
+            <option value="">Bez kategorii</option>
           </select>
-          <button id="save-prompt" class="btn btn-primary">💾 Guardar Prompt</button>
+          <button id="save-prompt" class="btn btn-primary">💾 Zapisz prompt</button>
         </div>
         
         <!-- Gestión de categorías -->
         <details class="category-manager">
-          <summary>Gestionar Categorías</summary>
+          <summary>Zarządzaj kategoriami</summary>
           <div class="category-manager-content">
             <div class="category-input-group">
-              <input type="text" id="new-category-name" placeholder="Nueva categoría">
-              <button id="add-category" class="btn btn-secondary">➕ Añadir</button>
+              <input type="text" id="new-category-name" placeholder="Nowa kategoria">
+              <button id="add-category" class="btn btn-secondary">➕ Dodaj</button>
             </div>
             <div id="categories-list" class="categories-list"></div>
           </div>
@@ -127,21 +127,21 @@ function createToolboxPanel() {
         <!-- Filtro por categoría -->
         <div class="prompt-filters">
           <select id="filter-category" class="category-select">
-            <option value="">📁 Todas las categorías</option>
+            <option value="">📁 Wszystkie kategorie</option>
           </select>
-          <input type="text" id="search-prompts" placeholder="🔍 Buscar prompts..." class="search-input">
+          <input type="text" id="search-prompts" placeholder="🔍 Szukaj promptów..." class="search-input">
         </div>
         
         <div id="prompt-list" class="prompt-list">
-          <p class="empty-state">No hay prompts guardados aún</p>
+          <p class="empty-state">Nie masz jeszcze zapisanych promptów</p>
         </div>
       </div>
     </div>
   `;
-  
+
   // Event listeners
   panel.querySelector('#close-toolbox').addEventListener('click', toggleToolbox);
-  
+
   // Tab switching
   panel.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -149,23 +149,23 @@ function createToolboxPanel() {
       switchTab(tabName);
     });
   });
-  
+
   // Chat management
   panel.querySelector('#select-all-chats').addEventListener('click', selectAllChats);
   panel.querySelector('#deselect-all-chats').addEventListener('click', deselectAllChats);
   panel.querySelector('#delete-selected-chats').addEventListener('click', deleteSelectedChats);
   panel.querySelector('#export-chats').addEventListener('click', exportSelectedChats);
   panel.querySelector('#rename-chats').addEventListener('click', renameSelectedChats);
-  
+
   // Chat search
   panel.querySelector('#search-chats').addEventListener('input', filterChats);
-  
+
   // Prompt management
   panel.querySelector('#save-prompt').addEventListener('click', savePrompt);
   panel.querySelector('#add-category').addEventListener('click', addCategory);
   panel.querySelector('#filter-category').addEventListener('change', filterPrompts);
   panel.querySelector('#search-prompts').addEventListener('input', filterPrompts);
-  
+
   return panel;
 }
 
@@ -185,7 +185,7 @@ function toggleToolbox() {
 function switchTab(tabName) {
   document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-  
+
   document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
   document.getElementById(`tab-${tabName}`).classList.add('active');
 }
@@ -197,41 +197,41 @@ let foundChats = [];
 function loadChats() {
   const chatList = document.getElementById('chat-list');
   chatList.innerHTML = '<p class="loading">Buscando chats...</p>';
-  
+
   // Buscar elementos de chat en la interfaz de Gemini
   setTimeout(() => {
     foundChats = [];
-    
+
     // Buscar usando los botones de menú de conversación (estructura exacta de Gemini)
     const conversationMenuButtons = document.querySelectorAll('.conversation-actions-menu-button');
-    
+
     console.log(`Botones de menú de conversación encontrados: ${conversationMenuButtons.length}`);
-    
+
     conversationMenuButtons.forEach((menuButton) => {
       // El botón está dentro de: conversation-actions-container -> conversation-items-container
       // Necesitamos buscar el título en el nivel del conversation-items-container
       const actionsContainer = menuButton.closest('.conversation-actions-container');
       if (!actionsContainer) return;
-      
+
       const itemsContainer = actionsContainer.closest('.conversation-items-container');
       if (!itemsContainer) return;
-      
+
       // Buscar el título dentro del items-container
       const titleElement = itemsContainer.querySelector('.conversation-title');
-      
+
       if (titleElement) {
         const titleText = titleElement.textContent.trim();
-        
+
         // Filtrar textos inválidos
-        if (titleText && 
-            titleText.length > 2 && 
-            !titleText.includes('Toolbox') &&
-            !titleText.toLowerCase().includes('nueva conversación') &&
-            !titleText.toLowerCase().includes('new chat')) {
-          
+        if (titleText &&
+          titleText.length > 2 &&
+          !titleText.includes('Toolbox') &&
+          !titleText.toLowerCase().includes('nueva conversación') &&
+          !titleText.toLowerCase().includes('new chat')) {
+
           // Buscar el div.conversation que es clickeable
           const conversationDiv = itemsContainer.querySelector('[data-test-id="conversation"]');
-          
+
           foundChats.push({
             id: foundChats.length,
             element: conversationDiv || itemsContainer,
@@ -244,26 +244,26 @@ function loadChats() {
         }
       }
     });
-    
+
     console.log(`Chats procesados: ${foundChats.length}`);
-    
+
     if (foundChats.length === 0) {
       chatList.innerHTML = `
         <p class="empty-state">
-          No se encontraron chats. 
+          Nie znaleziono czatów. 
           <br><br>
-          <strong>Sugerencias:</strong><br>
-          • <strong>Abre el menú lateral</strong> de Gemini (click en ☰)<br>
-          • Asegúrate de tener chats guardados<br>
-          • Desplázate por el historial para cargar más<br>
-          • Recarga la página e intenta de nuevo<br>
+          <strong>Sugestie:</strong><br>
+          • <strong>Otwórz boczne menu</strong> w Gemini (kliknij ☰)<br>
+          • Upewnij się, że masz zapisane czaty<br>
+          • Przewiń historię, aby załadować więcej<br>
+          • Odśwież stronę i spróbuj ponownie<br>
           <br>
-          <small style="color: #999;">Se buscaron ${conversationMenuButtons.length} botones de menú</small>
+          <small style="color: #999;">Przeszukano ${conversationMenuButtons.length} przycisków menu</small>
         </p>
       `;
       return;
     }
-    
+
     chatList.innerHTML = foundChats.map(chat => `
       <div class="chat-item" data-chat-index="${chat.id}">
         <input type="checkbox" class="chat-checkbox" data-chat-id="${chat.id}">
@@ -271,37 +271,37 @@ function loadChats() {
         <span class="chat-status" title="${chat.deleteButton ? 'Listo para eliminar' : 'Sin botón de menú'}">${chat.deleteButton ? '✓' : '⚠️'}</span>
       </div>
     `).join('');
-    
+
     // Update counter on checkbox change
     chatList.querySelectorAll('.chat-checkbox').forEach(checkbox => {
       checkbox.addEventListener('change', updateSelectedCount);
     });
-    
+
     // Hacer que los chat items sean clickeables para abrir el chat
     chatList.querySelectorAll('.chat-item').forEach((item) => {
       const chatIndex = parseInt(item.dataset.chatIndex);
       const chat = foundChats[chatIndex];
-      
+
       item.addEventListener('click', (e) => {
         // No hacer nada si se clickeó el checkbox
         if (e.target.classList.contains('chat-checkbox')) {
           return;
         }
-        
+
         // Abrir el chat clickeando en su elemento
         if (chat && chat.element) {
           console.log(`Abriendo chat: ${chat.title}`);
           chat.element.click();
         }
       });
-      
+
       // Cambiar el cursor cuando se pasa el mouse por el título
       const titleElement = item.querySelector('.chat-title');
       if (titleElement) {
         titleElement.style.cursor = 'pointer';
       }
     });
-    
+
     updateSelectedCount();
   }, 1500);
 }
@@ -335,10 +335,10 @@ function filterChats() {
   const searchTerm = document.getElementById('search-chats').value.toLowerCase().trim();
   const chatItems = document.querySelectorAll('.chat-item');
   let visibleCount = 0;
-  
+
   chatItems.forEach(item => {
     const title = item.querySelector('.chat-title').textContent.toLowerCase();
-    
+
     if (title.includes(searchTerm)) {
       item.classList.remove('hidden');
       visibleCount++;
@@ -346,57 +346,57 @@ function filterChats() {
       item.classList.add('hidden');
     }
   });
-  
+
   // Update search results count
   const searchCount = document.getElementById('search-results-count');
   if (searchTerm) {
-    searchCount.textContent = `${visibleCount} resultado(s)`;
+    searchCount.textContent = `${visibleCount} wynik(ów)`;
   } else {
     searchCount.textContent = '';
   }
-  
+
   updateSelectedCount();
 }
 
 // Export selected chats
 async function exportSelectedChats() {
   const selectedCheckboxes = document.querySelectorAll('.chat-checkbox:checked');
-  
+
   if (selectedCheckboxes.length === 0) {
-    alert('No hay chats seleccionados para exportar');
+    alert('Brak zaznaczonych czatów do wyeksportowania');
     return;
   }
-  
+
   const format = confirm(
-    `Exportar ${selectedCheckboxes.length} chat(s)\n\n` +
-    `OK = Copiar al portapapeles\n` +
-    `Cancelar = Descargar como archivo`
+    `Eksportuj ${selectedCheckboxes.length} czat(ów)\n\n` +
+    `OK = Kopiuj do schowka\n` +
+    `Anuluj = Pobierz jako plik`
   );
-  
-  let exportText = `EXPORTACIÓN DE CHATS DE GEMINI\n`;
-  exportText += `Fecha: ${new Date().toLocaleString()}\n`;
-  exportText += `Total de chats: ${selectedCheckboxes.length}\n`;
+
+  let exportText = `EKSPORT CZATÓW Z GEMINI\n`;
+  exportText += `Data: ${new Date().toLocaleString()}\n`;
+  exportText += `Łącznie czatów: ${selectedCheckboxes.length}\n`;
   exportText += `${'='.repeat(60)}\n\n`;
-  
+
   for (const checkbox of selectedCheckboxes) {
     const chatId = parseInt(checkbox.dataset.chatId);
     const chat = foundChats[chatId];
-    
+
     if (!chat) continue;
-    
-    exportText += `CHAT: ${chat.title}\n`;
+
+    exportText += `CZAT: ${chat.title}\n`;
     exportText += `${'-'.repeat(60)}\n`;
-    
+
     try {
       // Intentar extraer el contenido del chat
       // Click en el chat para abrirlo
       if (chat.element) {
         chat.element.click();
         await sleep(1000);
-        
+
         // Buscar el contenedor de mensajes
         const messageContainers = document.querySelectorAll('message-content, .message-content, [class*="message"]');
-        
+
         if (messageContainers.length > 0) {
           messageContainers.forEach((msg, idx) => {
             const text = msg.textContent.trim();
@@ -405,24 +405,24 @@ async function exportSelectedChats() {
             }
           });
         } else {
-          exportText += `[No se pudo extraer el contenido completo]\n`;
+          exportText += `[Nie udało się wyodrębnić pełnej zawartości]\n`;
         }
       }
     } catch (error) {
       console.error('Error extrayendo chat:', error);
-      exportText += `[Error al extraer contenido: ${error.message}]\n`;
+      exportText += `[Błąd podczas wyodrębniania zawartości: ${error.message}]\n`;
     }
-    
+
     exportText += `\n${'='.repeat(60)}\n\n`;
   }
-  
+
   if (format) {
     // Copiar al portapapeles
     try {
       await navigator.clipboard.writeText(exportText);
-      alert(`✓ ${selectedCheckboxes.length} chat(s) copiados al portapapeles`);
+      alert(`✓ ${selectedCheckboxes.length} czat(ów) skopiowano do schowka`);
     } catch (error) {
-      alert('Error al copiar. Usa la opción de descargar.');
+      alert('Błąd podczas kopiowania. Użyj opcji pobierania.');
     }
   } else {
     // Descargar como archivo
@@ -435,85 +435,85 @@ async function exportSelectedChats() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    
-    alert(`✓ ${selectedCheckboxes.length} chat(s) descargados`);
+
+    alert(`✓ ${selectedCheckboxes.length} czat(ów) pobrano`);
   }
 }
 
 // Rename selected chats
 async function renameSelectedChats() {
   const selectedCheckboxes = document.querySelectorAll('.chat-checkbox:checked');
-  
+
   if (selectedCheckboxes.length === 0) {
-    alert('No hay chats seleccionados para renombrar');
+    alert('Brak zaznaczonych czatów do zmiany nazwy');
     return;
   }
-  
+
   // Mostrar diálogo para elegir el modo
   const mode = prompt(
-    `RENOMBRADO MASIVO DE ${selectedCheckboxes.length} CHAT(S)\n\n` +
-    `Elige una opción:\n` +
-    `1 = Añadir prefijo (ej: "[Proyecto] Título")\n` +
-    `2 = Añadir sufijo (ej: "Título [2024]")\n` +
-    `3 = Reemplazar texto\n\n` +
-    `Escribe el número:`
+    `MASOWA ZMIANA NAZWY DLA ${selectedCheckboxes.length} CZAT(ÓW)\n\n` +
+    `Wybierz opcję:\n` +
+    `1 = Dodaj prefiks (np. "[Projekt] Tytuł")\n` +
+    `2 = Dodaj sufiks (np. "Tytuł [2024]")\n` +
+    `3 = Zamień tekst\n\n` +
+    `Wpisz numer:`
   );
-  
+
   if (!mode || !['1', '2', '3'].includes(mode)) {
     return;
   }
-  
+
   let text;
   if (mode === '1') {
-    text = prompt('Escribe el prefijo a añadir:', '[Proyecto] ');
+    text = prompt('Wpisz prefiks do dodania:', '[Projekt] ');
   } else if (mode === '2') {
-    text = prompt('Escribe el sufijo a añadir:', ' [2024]');
+    text = prompt('Wpisz sufiks do dodania:', ' [2024]');
   } else {
-    const searchText = prompt('Texto a buscar:');
+    const searchText = prompt('Tekst do wyszukania:');
     if (!searchText) return;
-    const replaceText = prompt('Reemplazar con:', '');
+    const replaceText = prompt('Zastąp przez:', '');
     text = { search: searchText, replace: replaceText };
   }
-  
+
   if (!text && mode !== '3') return;
-  
+
   const chatList = document.getElementById('chat-list');
   chatList.innerHTML = `
     <div class="loading">
-      <p>Renombrando chats...</p>
-      <p class="progress-text">0 de ${selectedCheckboxes.length}</p>
+      <p>Zmienianie nazw czatów...</p>
+      <p class="progress-text">0 z ${selectedCheckboxes.length}</p>
     </div>
   `;
-  
+
   let successCount = 0;
   let failedCount = 0;
-  
+
   for (const checkbox of selectedCheckboxes) {
     const chatId = parseInt(checkbox.dataset.chatId);
     const chat = foundChats[chatId];
-    
+
     if (!chat) {
       failedCount++;
       continue;
     }
-    
+
     try {
       // Scroll al chat
       chat.itemsContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
       await sleep(300);
-      
+
       // Abrir menú
       chat.menuButton.click();
       await sleep(600);
-      
+
       // Buscar opción "Cambiar nombre" o "Rename"
       const renameButton = document.querySelector('button[data-test-id="rename-button"]');
-      
+
       if (!renameButton) {
         // Método alternativo
         const menuItems = document.querySelectorAll('button[mat-menu-item]');
         let found = false;
-        
+
         for (const item of menuItems) {
           const text = item.textContent.trim().toLowerCase();
           if (text.includes('cambiar nombre') || text.includes('rename') || text.includes('edit')) {
@@ -523,7 +523,7 @@ async function renameSelectedChats() {
             break;
           }
         }
-        
+
         if (!found) {
           failedCount++;
           document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', keyCode: 27, bubbles: true }));
@@ -534,17 +534,17 @@ async function renameSelectedChats() {
         renameButton.click();
         await sleep(500);
       }
-      
+
       // Buscar el input de renombrado
       await sleep(400);
       const inputFields = document.querySelectorAll('input[type="text"], textarea');
-      
+
       let renamed = false;
       for (const input of inputFields) {
         if (input.value && input.value.length > 5) {
           const currentTitle = input.value;
           let newTitle;
-          
+
           if (mode === '1') {
             newTitle = text + currentTitle;
           } else if (mode === '2') {
@@ -552,14 +552,14 @@ async function renameSelectedChats() {
           } else {
             newTitle = currentTitle.replace(new RegExp(text.search, 'g'), text.replace);
           }
-          
+
           input.value = newTitle;
           input.dispatchEvent(new Event('input', { bubbles: true }));
-          
+
           // Buscar y hacer click en botón de confirmar/guardar
           await sleep(300);
           const saveButtons = document.querySelectorAll('button');
-          
+
           for (const btn of saveButtons) {
             const btnText = btn.textContent.toLowerCase().trim();
             if (btnText === 'guardar' || btnText === 'save' || btnText === 'ok' || btnText === 'aceptar') {
@@ -569,116 +569,116 @@ async function renameSelectedChats() {
               break;
             }
           }
-          
+
           if (renamed) break;
         }
       }
-      
+
       if (renamed) {
         successCount++;
       } else {
         failedCount++;
       }
-      
+
       // Actualizar progreso
       const progressText = document.querySelector('.progress-text');
       if (progressText) {
-        progressText.textContent = `${successCount + failedCount} de ${selectedCheckboxes.length}`;
+        progressText.textContent = `${successCount + failedCount} z ${selectedCheckboxes.length}`;
       }
-      
+
     } catch (error) {
       console.error('Error renombrando chat:', error);
       failedCount++;
     }
-    
+
     await sleep(800);
   }
-  
+
   alert(
-    `Renombrado completado\n\n` +
-    `✓ Exitosos: ${successCount}\n` +
-    `✗ Fallidos: ${failedCount}\n\n` +
-    `Recarga la página para ver los cambios.`
+    `Zmiana nazw zakończona\n\n` +
+    `✓ Sukces: ${successCount}\n` +
+    `✗ Niepowodzenie: ${failedCount}\n\n` +
+    `Odśwież stronę, aby zobaczyć zmiany.`
   );
-  
+
   setTimeout(() => loadChats(), 1000);
 }
 
 // Delete selected chats
 async function deleteSelectedChats() {
   const selectedCheckboxes = document.querySelectorAll('.chat-checkbox:checked');
-  
+
   if (selectedCheckboxes.length === 0) {
-    alert('No hay chats seleccionados');
+    alert('Brak zaznaczonych czatów');
     return;
   }
-  
+
   const confirmDelete = confirm(
-    `¿Estás seguro de que quieres eliminar ${selectedCheckboxes.length} chat(s)?\n\n` +
-    `Esta acción NO se puede deshacer.\n\n` +
-    `RECOMENDACIÓN: Si es la primera vez, prueba con solo 1 chat.`
+    `Czy na pewno chcesz usunąć ${selectedCheckboxes.length} czat(ów)?\n\n` +
+    `Ta operacja JEST NIEODWRACALNA.\n\n` +
+    `ZALECENIE: Jeśli to Twój pierwszy raz, najpierw spróbuj usunąć tylko 1 czat.`
   );
-  
+
   if (!confirmDelete) return;
-  
+
   // Mostrar progreso
   const chatList = document.getElementById('chat-list');
   chatList.innerHTML = `
     <div class="loading">
-      <p>Eliminando chats...</p>
-      <p class="progress-text">0 de ${selectedCheckboxes.length}</p>
-      <p style="font-size: 12px; color: #666; margin-top: 10px;">Esto puede tardar 3-5 segundos por chat...</p>
+      <p>Usuwanie czatów...</p>
+      <p class="progress-text">0 z ${selectedCheckboxes.length}</p>
+      <p style="font-size: 12px; color: #666; margin-top: 10px;">Może to zająć 3-5 sekund na czat...</p>
     </div>
   `;
-  
+
   let deletedCount = 0;
   let failedCount = 0;
   const errors = [];
-  
+
   for (const checkbox of selectedCheckboxes) {
     const chatId = parseInt(checkbox.dataset.chatId);
     const chat = foundChats[chatId];
-    
+
     if (!chat) {
       failedCount++;
       errors.push(`Chat ${chatId}: No encontrado en la lista`);
       continue;
     }
-    
+
     try {
       console.log(`\n=== Procesando: "${chat.title}" ===`);
-      
+
       if (!chat.menuButton) {
         failedCount++;
         errors.push(`"${chat.title}": Sin botón de menú`);
         console.error('Sin botón de menú');
         continue;
       }
-      
+
       // Paso 1: Hacer scroll al elemento
       chat.itemsContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
       await sleep(400);
-      
+
       // Paso 2: Hacer hover sobre el contenedor
       chat.itemsContainer.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true, cancelable: true }));
       await sleep(300);
-      
+
       // Paso 3: Click en el botón de menú (tres puntos)
       console.log('Click en botón de menú...');
       chat.menuButton.click();
       await sleep(800); // Esperar a que se abra el menú
-      
+
       // Paso 4: Buscar el botón de "Eliminar" en el menú desplegable
       console.log('Buscando botón "Eliminar"...');
-      
+
       // El botón tiene data-test-id="delete-button" y texto "Eliminar"
       const deleteButton = document.querySelector('button[data-test-id="delete-button"]');
-      
+
       if (!deleteButton) {
         // Método alternativo: buscar por texto
         const menuItems = document.querySelectorAll('button[mat-menu-item]');
         let found = false;
-        
+
         for (const item of menuItems) {
           const text = item.textContent.trim().toLowerCase();
           if (text === 'eliminar' || text === 'delete') {
@@ -689,12 +689,12 @@ async function deleteSelectedChats() {
             break;
           }
         }
-        
+
         if (!found) {
           failedCount++;
           errors.push(`"${chat.title}": No se encontró botón "Eliminar" en el menú`);
           console.error('Botón "Eliminar" no encontrado');
-          
+
           // Cerrar el menú presionando ESC
           document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', keyCode: 27, bubbles: true }));
           await sleep(300);
@@ -705,27 +705,27 @@ async function deleteSelectedChats() {
         deleteButton.click();
         await sleep(600);
       }
-      
+
       // Paso 5: Buscar y confirmar en el diálogo
       console.log('Buscando diálogo de confirmación...');
-      
+
       // Gemini suele mostrar un diálogo con botones de confirmación
       // Buscar botones que digan "Eliminar", "Delete", "Confirmar", "OK"
       await sleep(400);
-      
+
       const dialogButtons = document.querySelectorAll('button, [role="button"]');
       let confirmed = false;
-      
+
       for (const btn of dialogButtons) {
         const btnText = btn.textContent.trim().toLowerCase();
         const ariaLabel = (btn.getAttribute('aria-label') || '').toLowerCase();
-        
+
         // Buscar botón de confirmación (evitar "Cancelar")
-        if ((btnText === 'eliminar' || btnText === 'delete' || 
-             btnText === 'confirmar' || btnText === 'confirm' ||
-             btnText === 'ok' || btnText === 'aceptar') &&
-            !btnText.includes('cancelar') && !btnText.includes('cancel')) {
-          
+        if ((btnText === 'eliminar' || btnText === 'delete' ||
+          btnText === 'confirmar' || btnText === 'confirm' ||
+          btnText === 'ok' || btnText === 'aceptar') &&
+          !btnText.includes('cancelar') && !btnText.includes('cancel')) {
+
           console.log('✓ Confirmando eliminación:', btnText);
           btn.click();
           confirmed = true;
@@ -733,7 +733,7 @@ async function deleteSelectedChats() {
           break;
         }
       }
-      
+
       if (confirmed) {
         deletedCount++;
         console.log(`✓✓✓ Chat "${chat.title}" eliminado exitosamente`);
@@ -742,48 +742,48 @@ async function deleteSelectedChats() {
         deletedCount++;
         console.log(`✓ Chat "${chat.title}" procesado (sin diálogo de confirmación)`);
       }
-      
+
       // Actualizar progreso
       const progressText = document.querySelector('.progress-text');
       if (progressText) {
-        progressText.textContent = `${deletedCount + failedCount} de ${selectedCheckboxes.length}`;
+        progressText.textContent = `${deletedCount + failedCount} z ${selectedCheckboxes.length}`;
       }
-      
+
     } catch (error) {
       console.error(`❌ Error eliminando chat "${chat.title}":`, error);
       failedCount++;
       errors.push(`"${chat.title}": ${error.message}`);
     }
-    
+
     // Pausa entre eliminaciones para no sobrecargar
     await sleep(1000);
   }
-  
+
   // Mostrar resultado final
-  let resultMessage = `✅ Proceso completado\n\n`;
-  resultMessage += `✓ Eliminados: ${deletedCount}\n`;
-  
+  let resultMessage = `✅ Proces zakończony\n\n`;
+  resultMessage += `✓ Usunięte: ${deletedCount}\n`;
+
   if (failedCount > 0) {
-    resultMessage += `✗ Fallidos: ${failedCount}\n`;
-    
+    resultMessage += `✗ Nieudane: ${failedCount}\n`;
+
     if (errors.length > 0) {
-      resultMessage += `\nErrores:\n`;
+      resultMessage += `\nBłędy:\n`;
       errors.slice(0, 3).forEach(err => {
         resultMessage += `• ${err}\n`;
       });
-      
+
       if (errors.length > 3) {
-        resultMessage += `... y ${errors.length - 3} más\n`;
+        resultMessage += `... i ${errors.length - 3} więcej\n`;
       }
     }
   }
-  
+
   if (deletedCount > 0) {
-    resultMessage += `\n💡 Recarga la página de Gemini para ver los cambios.`;
+    resultMessage += `\n💡 Odśwież stronę Gemini, aby zobaczyć zmiany.`;
   }
-  
+
   alert(resultMessage);
-  
+
   // Recargar la lista de chats
   console.log('Recargando lista de chats...');
   setTimeout(() => {
@@ -802,44 +802,44 @@ async function loadPrompts() {
     const result = await browser.storage.local.get(['prompts', 'categories']);
     const prompts = result.prompts || [];
     const categories = result.categories || [];
-    
+
     // Actualizar selectores de categoría
     updateCategorySelects(categories);
-    
+
     // Actualizar lista de categorías en el gestor
     updateCategoriesList(categories);
-    
+
     const promptList = document.getElementById('prompt-list');
-    
+
     if (prompts.length === 0) {
-      promptList.innerHTML = '<p class="empty-state">No hay prompts guardados aún</p>';
+      promptList.innerHTML = '<p class="empty-state">Nie masz jeszcze zapisanych promptów</p>';
       return;
     }
-    
+
     // Aplicar filtros
     const filterCategory = document.getElementById('filter-category').value;
     const searchTerm = document.getElementById('search-prompts').value.toLowerCase();
-    
+
     let filteredPrompts = prompts.map((prompt, index) => ({ ...prompt, originalIndex: index }));
-    
+
     // Filtrar por categoría
     if (filterCategory) {
       filteredPrompts = filteredPrompts.filter(p => p.category === filterCategory);
     }
-    
+
     // Filtrar por búsqueda
     if (searchTerm) {
-      filteredPrompts = filteredPrompts.filter(p => 
+      filteredPrompts = filteredPrompts.filter(p =>
         (p.name || '').toLowerCase().includes(searchTerm) ||
         p.text.toLowerCase().includes(searchTerm)
       );
     }
-    
+
     if (filteredPrompts.length === 0) {
-      promptList.innerHTML = '<p class="empty-state">No se encontraron prompts con esos filtros</p>';
+      promptList.innerHTML = '<p class="empty-state">Nie znaleziono promptów spełniających podane kryteria</p>';
       return;
     }
-    
+
     // Agrupar por categoría
     const grouped = {};
     filteredPrompts.forEach(prompt => {
@@ -847,22 +847,22 @@ async function loadPrompts() {
       if (!grouped[cat]) grouped[cat] = [];
       grouped[cat].push(prompt);
     });
-    
+
     let html = '';
     Object.keys(grouped).sort().forEach(category => {
       html += `<div class="prompt-category-group">`;
       html += `<div class="category-header">${getCategoryIcon(category)} ${category}</div>`;
-      
+
       grouped[category].forEach(prompt => {
         html += `
           <div class="prompt-item" data-category="${prompt.category || ''}">
             <div class="prompt-header">
-              <strong>${prompt.name || 'Prompt sin nombre'}</strong>
+              <strong>${prompt.name || 'Prompt bez nazwy'}</strong>
               <div class="prompt-actions">
-                <button class="btn-icon" data-action="copy" data-index="${prompt.originalIndex}" title="Copiar">📋</button>
-                <button class="btn-icon" data-action="insert" data-index="${prompt.originalIndex}" title="Insertar">➕</button>
-                <button class="btn-icon" data-action="edit" data-index="${prompt.originalIndex}" title="Editar">✏️</button>
-                <button class="btn-icon" data-action="delete" data-index="${prompt.originalIndex}" title="Eliminar">🗑️</button>
+                <button class="btn-icon" data-action="copy" data-index="${prompt.originalIndex}" title="Kopiuj">📋</button>
+                <button class="btn-icon" data-action="insert" data-index="${prompt.originalIndex}" title="Wstaw">➕</button>
+                <button class="btn-icon" data-action="edit" data-index="${prompt.originalIndex}" title="Edytuj">✏️</button>
+                <button class="btn-icon" data-action="delete" data-index="${prompt.originalIndex}" title="Usuń">🗑️</button>
               </div>
             </div>
             <div class="prompt-text">${prompt.text}</div>
@@ -870,12 +870,12 @@ async function loadPrompts() {
           </div>
         `;
       });
-      
+
       html += `</div>`;
     });
-    
+
     promptList.innerHTML = html;
-    
+
     // Add event listeners
     promptList.querySelectorAll('.btn-icon').forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -907,20 +907,20 @@ function getCategoryIcon(category) {
 function updateCategorySelects(categories) {
   const newPromptCategory = document.getElementById('new-prompt-category');
   const filterCategory = document.getElementById('filter-category');
-  
+
   // Guardar valor actual
   const currentNew = newPromptCategory.value;
   const currentFilter = filterCategory.value;
-  
+
   // Actualizar opciones
-  newPromptCategory.innerHTML = '<option value="">Sin categoría</option>';
-  filterCategory.innerHTML = '<option value="">📁 Todas las categorías</option>';
-  
+  newPromptCategory.innerHTML = '<option value="">Bez kategorii</option>';
+  filterCategory.innerHTML = '<option value="">📁 Wszystkie kategorie</option>';
+
   categories.forEach(cat => {
     newPromptCategory.innerHTML += `<option value="${cat}">${cat}</option>`;
     filterCategory.innerHTML += `<option value="${cat}">${getCategoryIcon(cat)} ${cat}</option>`;
   });
-  
+
   // Restaurar valores
   newPromptCategory.value = currentNew;
   filterCategory.value = currentFilter;
@@ -929,19 +929,19 @@ function updateCategorySelects(categories) {
 // Update categories list in manager
 function updateCategoriesList(categories) {
   const list = document.getElementById('categories-list');
-  
+
   if (categories.length === 0) {
-    list.innerHTML = '<p class="empty-state-small">No hay categorías creadas</p>';
+    list.innerHTML = '<p class="empty-state-small">Brak utworzonych kategorii</p>';
     return;
   }
-  
+
   list.innerHTML = categories.map(cat => `
     <div class="category-item">
       <span>${getCategoryIcon(cat)} ${cat}</span>
-      <button class="btn-icon-small" data-action="delete-category" data-category="${cat}" title="Eliminar categoría">×</button>
+      <button class="btn-icon-small" data-action="delete-category" data-category="${cat}" title="Usuń kategorię">×</button>
     </div>
   `).join('');
-  
+
   // Event listeners para eliminar categorías
   list.querySelectorAll('[data-action="delete-category"]').forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -955,56 +955,56 @@ function updateCategoriesList(categories) {
 async function addCategory() {
   const input = document.getElementById('new-category-name');
   const categoryName = input.value.trim();
-  
+
   if (!categoryName) {
-    alert('Por favor escribe un nombre para la categoría');
+    alert('Proszę wpisać nazwę dla kategorii');
     return;
   }
-  
+
   try {
     const result = await browser.storage.local.get('categories');
     const categories = result.categories || [];
-    
+
     if (categories.includes(categoryName)) {
-      alert('Esta categoría ya existe');
+      alert('Ta kategoria już istnieje');
       return;
     }
-    
+
     categories.push(categoryName);
     await browser.storage.local.set({ categories });
-    
+
     input.value = '';
     loadPrompts();
   } catch (error) {
     console.error('Error añadiendo categoría:', error);
-    alert('Error al añadir la categoría');
+    alert('Błąd podczas dodawania kategorii');
   }
 }
 
 // Delete category
 async function deleteCategory(categoryName) {
-  if (!confirm(`¿Eliminar la categoría "${categoryName}"?\n\nLos prompts de esta categoría quedarán sin categoría.`)) {
+  if (!confirm(`Czy usunąć kategorię "${categoryName}"?\n\nPrompty z tej kategorii pozostaną bez kategorii.`)) {
     return;
   }
-  
+
   try {
     const result = await browser.storage.local.get(['categories', 'prompts']);
     const categories = result.categories || [];
     const prompts = result.prompts || [];
-    
+
     // Eliminar categoría
     const index = categories.indexOf(categoryName);
     if (index > -1) {
       categories.splice(index, 1);
     }
-    
+
     // Limpiar categoría de los prompts
     prompts.forEach(prompt => {
       if (prompt.category === categoryName) {
         prompt.category = '';
       }
     });
-    
+
     await browser.storage.local.set({ categories, prompts });
     loadPrompts();
   } catch (error) {
@@ -1023,49 +1023,49 @@ async function savePrompt() {
   const text = document.getElementById('new-prompt-text').value.trim();
   const name = document.getElementById('new-prompt-name').value.trim();
   const category = document.getElementById('new-prompt-category').value;
-  
+
   if (!text) {
     alert('Por favor escribe un prompt');
     return;
   }
-  
+
   try {
     const result = await browser.storage.local.get('prompts');
     const prompts = result.prompts || [];
-    
+
     prompts.push({
       name: name || `Prompt ${prompts.length + 1}`,
       text: text,
       category: category,
       createdAt: new Date().toISOString()
     });
-    
+
     await browser.storage.local.set({ prompts });
-    
+
     // Clear inputs
     document.getElementById('new-prompt-text').value = '';
     document.getElementById('new-prompt-name').value = '';
     document.getElementById('new-prompt-category').value = '';
-    
+
     // Reload list
     loadPrompts();
-    alert('✓ Prompt guardado exitosamente');
+    alert('✓ Prompt zapisany pomyślnie');
   } catch (error) {
     console.error('Error guardando prompt:', error);
-    alert('Error al guardar el prompt');
+    alert('Błąd podczas zapisywania promptu');
   }
 }
 
 // Handle prompt actions
 async function handlePromptAction(action, index, prompts) {
   const prompt = prompts[index];
-  
+
   switch (action) {
     case 'copy':
       navigator.clipboard.writeText(prompt.text);
-      alert('✓ Prompt copiado al portapapeles');
+      alert('✓ Prompt skopiowany do schowka');
       break;
-      
+
     case 'insert':
       // Buscar el textarea de Gemini e insertar el texto
       const textarea = document.querySelector('rich-textarea, textarea, [contenteditable="true"]');
@@ -1078,31 +1078,31 @@ async function handlePromptAction(action, index, prompts) {
           textarea.dispatchEvent(new Event('input', { bubbles: true }));
         }
         textarea.focus();
-        alert('✓ Prompt insertado');
+        alert('✓ Prompt wstawiony');
       } else {
-        alert('⚠️ No se pudo encontrar el área de texto de Gemini');
+        alert('⚠️ Nie można znaleźć pola tekstowego Gemini');
       }
       break;
-      
+
     case 'edit':
       // Editar prompt
-      const newName = prompt('Nombre del prompt:', prompt.name);
+      const newName = prompt('Nazwa promptu:', prompt.name);
       if (newName === null) return;
-      
-      const newText = prompt('Texto del prompt:', prompt.text);
+
+      const newText = prompt('Tekst promptu:', prompt.text);
       if (newText === null) return;
-      
+
       const result = await browser.storage.local.get(['prompts', 'categories']);
       const categories = result.categories || [];
-      
+
       let newCategory = prompt.category;
       if (categories.length > 0) {
         const catChoice = prompt(
-          `Categoría actual: ${prompt.category || 'Sin categoría'}\n\n` +
-          `Categorías disponibles:\n${categories.map((c, i) => `${i + 1}. ${c}`).join('\n')}\n\n` +
-          `Escribe el número de la categoría o el nombre (deja vacío para sin categoría):`
+          `Obecna kategoria: ${prompt.category || 'Bez kategorii'}\n\n` +
+          `Dostępne kategorie:\n${categories.map((c, i) => `${i + 1}. ${c}`).join('\n')}\n\n` +
+          `Wpisz numer kategorii lub nazwę (zostaw puste dla braku kategorii):`
         );
-        
+
         if (catChoice !== null) {
           const catIndex = parseInt(catChoice) - 1;
           if (!isNaN(catIndex) && categories[catIndex]) {
@@ -1114,25 +1114,25 @@ async function handlePromptAction(action, index, prompts) {
           }
         }
       }
-      
+
       prompts[index] = {
         ...prompt,
         name: newName.trim() || prompt.name,
         text: newText.trim() || prompt.text,
         category: newCategory
       };
-      
+
       await browser.storage.local.set({ prompts });
       loadPrompts();
-      alert('✓ Prompt actualizado');
+      alert('✓ Prompt zaktualizowany');
       break;
-      
+
     case 'delete':
-      if (confirm(`¿Eliminar el prompt "${prompt.name}"?`)) {
+      if (confirm(`Czy na pewno usunąć prompt "${prompt.name}"?`)) {
         prompts.splice(index, 1);
         await browser.storage.local.set({ prompts });
         loadPrompts();
-        alert('✓ Prompt eliminado');
+        alert('✓ Prompt usunięty');
       }
       break;
   }
@@ -1143,15 +1143,15 @@ async function init() {
   try {
     // Esperar a que la página esté lista
     await waitForElement('body');
-    
+
     // Crear y añadir el botón
     const button = createToolboxButton();
     document.body.appendChild(button);
-    
+
     // Crear y añadir el panel
     const panel = createToolboxPanel();
     document.body.appendChild(panel);
-    
+
     console.log('Gemini Toolbox: Inicializado correctamente');
   } catch (error) {
     console.error('Error inicializando Gemini Toolbox:', error);

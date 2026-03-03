@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "GeminiFlow",
   "version": "2.1.0",
-  "description": "Herramientas avanzadas para Google Gemini: gestión de chats, exportación, renombrado masivo, prompts con categorías y más.",
+  "description": "Zaawansowane narzędzia dla Google Gemini: zarządzanie czatami, eksport, masowe zmienianie nazw, prompty z kategoriami i inne.",
   "icons": {
     "48": "icons/icon-48.png",
     "96": "icons/icon-96.png"
