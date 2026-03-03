@@ -59,6 +59,7 @@ function createToolboxPanel() {
     
     <div class="toolbox-tabs">
       <button class="tab-btn active" data-tab="chats">Zarządzanie czatami</button>
+      <button class="tab-btn" data-tab="directories">Katalogi</button>
       <button class="tab-btn" data-tab="prompts">Moje prompty</button>
     </div>
     
@@ -95,6 +96,33 @@ function createToolboxPanel() {
         
         <div class="chat-stats">
           <span id="selected-count">0</span> zaznaczone | <span id="visible-count">0</span> widoczne
+        </div>
+      </div>
+      
+      <!-- Tab: Directorios -->
+      <div class="tab-content" id="tab-directories">
+        <h3>Katalogi czatów</h3>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">Twórz katalogi i przeciągaj do nich swoje czaty, by zachować porządek.</p>
+        
+        <div class="category-manager" style="margin-bottom: 24px;">
+          <summary>Utwórz nowy katalog</summary>
+          <div class="category-manager-content">
+            <div class="category-input-group">
+              <input type="text" id="new-directory-name" placeholder="Nazwa nowego katalogu">
+              <button id="add-chat-directory" class="btn btn-secondary">➕ Dodaj</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="directories-list" class="directory-list">
+          <p class="loading">Ładowanie katalogów...</p>
+        </div>
+
+        <div class="uncategorized-chats">
+          <h4 style="margin: 0 0 12px 0; color: #1e293b; font-size: 14px;">Nieprzypisane czaty</h4>
+          <div id="uncategorized-chat-list" class="uncategorized-list">
+            <p class="loading">Ładowanie...</p>
+          </div>
         </div>
       </div>
       
@@ -166,6 +194,9 @@ function createToolboxPanel() {
   panel.querySelector('#filter-category').addEventListener('change', filterPrompts);
   panel.querySelector('#search-prompts').addEventListener('input', filterPrompts);
 
+  // Directory management
+  panel.querySelector('#add-chat-directory').addEventListener('click', addChatDirectory);
+
   return panel;
 }
 
@@ -177,6 +208,7 @@ function toggleToolbox() {
     if (!panel.classList.contains('hidden')) {
       loadChats();
       loadPrompts();
+      loadDirectories();
     }
   }
 }
@@ -232,8 +264,21 @@ function loadChats() {
           // Buscar el div.conversation que es clickeable
           const conversationDiv = itemsContainer.querySelector('[data-test-id="conversation"]');
 
+          let linkElement = conversationDiv ? conversationDiv.querySelector('a') : null;
+          if (!linkElement && itemsContainer) {
+            linkElement = itemsContainer.querySelector('a');
+          }
+
+          let chatId = '';
+          if (linkElement && linkElement.href) {
+            chatId = linkElement.href.split('/').pop();
+          } else {
+            chatId = titleText.replace(/\s+/g, '-').toLowerCase();
+          }
+
           foundChats.push({
             id: foundChats.length,
+            chatId: chatId, // ID estable para directorios
             element: conversationDiv || itemsContainer,
             menuButton: menuButton,
             itemsContainer: itemsContainer,
@@ -1137,6 +1182,208 @@ async function handlePromptAction(action, index, prompts) {
       break;
   }
 }
+
+// ==========================================
+// DIRECTORY MANAGEMENT
+// ==========================================
+
+// Add a new chat directory
+async function addChatDirectory() {
+  const input = document.getElementById('new-directory-name');
+  const dirName = input.value.trim();
+  if (!dirName) return;
+
+  try {
+    const { chatCategories = [] } = await browser.storage.local.get({ chatCategories: [] });
+    if (chatCategories.includes(dirName)) {
+      alert('Ten katalog już istnieje.');
+      return;
+    }
+
+    chatCategories.push(dirName);
+    await browser.storage.local.set({ chatCategories });
+
+    input.value = '';
+    loadDirectories();
+  } catch (error) {
+    console.error('Błąd usuwania katalogu:', error);
+  }
+}
+
+// Remove a chat directory
+async function removeDirectory(dirName) {
+  if (!confirm(`Czy na pewno chcesz usunąć katalog "${dirName}"? Czaty w nim powrócą do nieprzypisanych.`)) return;
+
+  try {
+    let { chatCategories = [], chatDirectories = {} } = await browser.storage.local.get({ chatCategories: [], chatDirectories: {} });
+
+    // Remove category
+    chatCategories = chatCategories.filter(cat => cat !== dirName);
+
+    // Remove references from chats
+    for (const chatId in chatDirectories) {
+      if (chatDirectories[chatId] === dirName) {
+        delete chatDirectories[chatId];
+      }
+    }
+
+    await browser.storage.local.set({ chatCategories, chatDirectories });
+    loadDirectories();
+  } catch (error) {
+    console.error('Błąd usuwania katalogu:', error);
+  }
+}
+
+// Remove chat from directory
+async function removeChatFromDirectory(chatId) {
+  try {
+    const { chatDirectories = {} } = await browser.storage.local.get({ chatDirectories: {} });
+    if (chatDirectories[chatId]) {
+      delete chatDirectories[chatId];
+      await browser.storage.local.set({ chatDirectories });
+      loadDirectories();
+    }
+  } catch (error) {
+    console.error('Błąd usuwania czatu z katalogu:', error);
+  }
+}
+
+// Load and render directories and uncategorized chats
+async function loadDirectories() {
+  const dirListContainer = document.getElementById('directories-list');
+  const uncategorizedContainer = document.getElementById('uncategorized-chat-list');
+
+  if (!dirListContainer || !uncategorizedContainer) return;
+
+  try {
+    const { chatCategories = [], chatDirectories = {} } = await browser.storage.local.get({ chatCategories: [], chatDirectories: {} });
+
+    // Prepare directory maps
+    const dirMap = {};
+    chatCategories.forEach(cat => dirMap[cat] = []);
+    const uncategorizedChats = [];
+
+    // Distribute found chats
+    foundChats.forEach(chat => {
+      const dirName = chatDirectories[chat.chatId];
+      if (dirName && dirMap[dirName] !== undefined) {
+        dirMap[dirName].push(chat);
+      } else {
+        uncategorizedChats.push(chat);
+      }
+    });
+
+    // Render Directories
+    if (chatCategories.length === 0) {
+      dirListContainer.innerHTML = '<p class="empty-state-small">Brak stworzonych katalogów.</p>';
+    } else {
+      dirListContainer.innerHTML = chatCategories.map(cat => `
+        <div class="directory-drop-zone" data-category="${cat}">
+          <div class="directory-header">
+            <span class="directory-title">📁 ${cat}</span>
+            <button class="chat-remove-btn" onclick="removeDirectory('${cat}')" title="Usuń katalog">✖</button>
+          </div>
+          <div class="directory-content">
+            ${dirMap[cat].length === 0
+          ? '<span style="color:#94a3b8; font-size:12px; font-style:italic; padding-left: 8px;">Upuść czat tutaj...</span>'
+          : dirMap[cat].map(chat => `
+                <div class="draggable-chat" draggable="true" data-chat-id="${chat.chatId}">
+                  <span class="chat-title" title="${chat.title}">💬 ${chat.title}</span>
+                  <button class="chat-remove-btn" onclick="removeChatFromDirectory('${chat.chatId}')" title="Usuń z katalogu">✖</button>
+                </div>
+              `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Render uncategorized chats
+    if (uncategorizedChats.length === 0) {
+      uncategorizedContainer.innerHTML = '<p class="empty-state-small">Brak nieprzypisanych czatów. Odśwież widok Zarządzania czatami, jeśli czegoś brakuje.</p>';
+    } else {
+      uncategorizedContainer.innerHTML = uncategorizedChats.map(chat => `
+        <div class="draggable-chat" draggable="true" data-chat-id="${chat.chatId}">
+          <span class="chat-title" title="${chat.title}">💬 ${chat.title}</span>
+          <span style="color:#cbd5e1; font-size: 16px;">⋮⋮</span>
+        </div>
+      `).join('');
+    }
+
+    setupDragAndDrop();
+
+  } catch (error) {
+    console.error('Błąd ładowania katalogów:', error);
+    dirListContainer.innerHTML = '<p class="empty-state">Wystąpił błąd.</p>';
+  }
+}
+
+// Add Drag & Drop Listeners
+function setupDragAndDrop() {
+  const draggables = document.querySelectorAll('.draggable-chat');
+  const dropZones = document.querySelectorAll('.directory-drop-zone');
+  const uncategorizedZone = document.querySelector('.uncategorized-chats');
+
+  draggables.forEach(draggable => {
+    draggable.addEventListener('dragstart', () => {
+      draggable.classList.add('dragging');
+      // Set opacity for UX
+      setTimeout(() => draggable.style.opacity = '0.5', 0);
+    });
+
+    draggable.addEventListener('dragend', () => {
+      draggable.classList.remove('dragging');
+      draggable.style.opacity = '1';
+    });
+  });
+
+  dropZones.forEach(zone => {
+    zone.addEventListener('dragover', e => {
+      e.preventDefault();
+      zone.classList.add('drag-over');
+    });
+
+    zone.addEventListener('dragleave', () => {
+      zone.classList.remove('drag-over');
+    });
+
+    zone.addEventListener('drop', async e => {
+      e.preventDefault();
+      zone.classList.remove('drag-over');
+
+      const draggable = document.querySelector('.dragging');
+      if (!draggable) return;
+
+      const chatId = draggable.getAttribute('data-chat-id');
+      const targetCategory = zone.getAttribute('data-category');
+
+      try {
+        const { chatDirectories = {} } = await browser.storage.local.get({ chatDirectories: {} });
+        chatDirectories[chatId] = targetCategory;
+        await browser.storage.local.set({ chatDirectories });
+        loadDirectories(); // Re-render everything
+      } catch (err) {
+        console.error("Drop error", err);
+      }
+    });
+  });
+
+  // Allow dropping back to uncategorized if needed
+  if (uncategorizedZone) {
+    uncategorizedZone.addEventListener('dragover', e => { e.preventDefault(); });
+    uncategorizedZone.addEventListener('drop', async e => {
+      e.preventDefault();
+      const draggable = document.querySelector('.dragging');
+      if (!draggable) return;
+      const chatId = draggable.getAttribute('data-chat-id');
+      // Remove from any category by unsetting the directory link
+      removeChatFromDirectory(chatId);
+    });
+  }
+}
+
+// Make sure helper functions are globally accessible so inline onClick works:
+window.removeDirectory = removeDirectory;
+window.removeChatFromDirectory = removeChatFromDirectory;
 
 // Initialize
 async function init() {

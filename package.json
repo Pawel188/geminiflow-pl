@@ -1,6 +1,6 @@
 {
   "name": "geminiflow",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Extensión de Firefox para Google Gemini con herramientas avanzadas de productividad",
   "scripts": {
     "lint": "web-ext lint",

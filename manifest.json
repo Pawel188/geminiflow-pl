@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "GeminiFlow",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Zaawansowane narzędzia dla Google Gemini: zarządzanie czatami, eksport, masowe zmienianie nazw, prompty z kategoriami i inne.",
   "icons": {
     "48": "icons/icon-48.png",
@@ -16,15 +16,23 @@
       "id": "geminiflow@francisco.dev",
       "strict_min_version": "79.0",
       "data_collection_permissions": {
-        "required": ["none"]
+        "required": [
+          "none"
+        ]
       }
     }
   },
   "content_scripts": [
     {
-      "matches": ["https://gemini.google.com/*"],
-      "js": ["content/content.js"],
-      "css": ["content/styles.css"],
+      "matches": [
+        "https://gemini.google.com/*"
+      ],
+      "js": [
+        "content/content.js"
+      ],
+      "css": [
+        "content/styles.css"
+      ],
       "run_at": "document_end"
     }
   ],
