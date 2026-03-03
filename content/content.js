@@ -309,46 +309,96 @@ function loadChats() {
       return;
     }
 
-    chatList.innerHTML = foundChats.map(chat => `
-      <div class="chat-item" data-chat-index="${chat.id}">
-        <input type="checkbox" class="chat-checkbox" data-chat-id="${chat.id}">
-        <span class="chat-title" title="${chat.title}">${chat.title}</span>
-        <span class="chat-status" title="${chat.deleteButton ? 'Listo para eliminar' : 'Sin botón de menú'}">${chat.deleteButton ? '✓' : '⚠️'}</span>
-      </div>
-    `).join('');
+    // Initialize storage variables inside setTimeout to handle async gracefully
+    browser.storage.local.get({ chatCategories: [], chatDirectories: {} }).then(({ chatCategories, chatDirectories }) => {
+      // Prepare directory maps
+      const dirMap = {};
+      chatCategories.forEach(cat => dirMap[cat] = []);
+      const uncategorizedChats = [];
 
-    // Update counter on checkbox change
-    chatList.querySelectorAll('.chat-checkbox').forEach(checkbox => {
-      checkbox.addEventListener('change', updateSelectedCount);
-    });
-
-    // Hacer que los chat items sean clickeables para abrir el chat
-    chatList.querySelectorAll('.chat-item').forEach((item) => {
-      const chatIndex = parseInt(item.dataset.chatIndex);
-      const chat = foundChats[chatIndex];
-
-      item.addEventListener('click', (e) => {
-        // No hacer nada si se clickeó el checkbox
-        if (e.target.classList.contains('chat-checkbox')) {
-          return;
-        }
-
-        // Abrir el chat clickeando en su elemento
-        if (chat && chat.element) {
-          console.log(`Abriendo chat: ${chat.title}`);
-          chat.element.click();
+      // Distribute found chats
+      foundChats.forEach(chat => {
+        const dirName = chatDirectories[chat.chatId];
+        if (dirName && dirMap[dirName] !== undefined) {
+          dirMap[dirName].push(chat);
+        } else {
+          uncategorizedChats.push(chat);
         }
       });
 
-      // Cambiar el cursor cuando se pasa el mouse por el título
-      const titleElement = item.querySelector('.chat-title');
-      if (titleElement) {
-        titleElement.style.cursor = 'pointer';
-      }
-    });
+      // HTML Generator for chat items
+      const generateChatItemsHTML = (chats) => {
+        return chats.map(chat => `
+          <div class="chat-item" data-chat-index="${chat.id}">
+            <input type="checkbox" class="chat-checkbox" data-chat-id="${chat.id}">
+            <span class="chat-title" title="${chat.title}">${chat.title}</span>
+            <span class="chat-status" title="${chat.deleteButton ? 'Gotów do usunięcia' : 'Brak przycisku'}">${chat.deleteButton ? '✓' : '⚠️'}</span>
+          </div>
+        `).join('');
+      };
 
-    updateSelectedCount();
-  }, 1500);
+      let finalHTML = '';
+
+      // Render Directories
+      chatCategories.forEach(cat => {
+        if (dirMap[cat].length > 0) {
+          finalHTML += `
+            <div class="chat-directory-group">
+              <div class="directory-header-row" onclick="this.parentElement.classList.toggle('open')">
+                <span class="directory-toggle-icon">▶</span>
+                <span>📁 ${cat} (${dirMap[cat].length})</span>
+              </div>
+              <div class="chat-list-subcontainer">
+                ${generateChatItemsHTML(dirMap[cat])}
+              </div>
+            </div>
+          `;
+        }
+      });
+
+      // Render Uncategorized
+      if (uncategorizedChats.length > 0) {
+        if (chatCategories.length > 0 && chatCategories.some(cat => dirMap[cat].length > 0)) {
+          finalHTML += `<div style="margin-top: 16px; margin-bottom: 8px; font-weight: bold; color: #64748b; font-size: 13px; text-transform: uppercase;">Pozostałe czaty</div>`;
+        }
+        finalHTML += generateChatItemsHTML(uncategorizedChats);
+      }
+
+      chatList.innerHTML = finalHTML;
+
+      // Update counter on checkbox change
+      chatList.querySelectorAll('.chat-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', updateSelectedCount);
+      });
+
+      // Hacer que los chat items sean clickeables para abrir el chat
+      chatList.querySelectorAll('.chat-item').forEach((item) => {
+        const chatIndex = parseInt(item.dataset.chatIndex);
+        const chat = foundChats[chatIndex];
+
+        item.addEventListener('click', (e) => {
+          // No hacer nada si se clickeó el checkbox
+          if (e.target.classList.contains('chat-checkbox')) {
+            return;
+          }
+
+          // Abrir el chat clickeando en su elemento
+          if (chat && chat.element) {
+            console.log(`Otwieranie czatu: ${chat.title}`);
+            chat.element.click();
+          }
+        });
+
+        // Cambiar el cursor cuando se pasa el mouse por el título
+        const titleElement = item.querySelector('.chat-title');
+        if (titleElement) {
+          titleElement.style.cursor = 'pointer';
+        }
+      });
+
+      updateSelectedCount();
+    }); // end then
+  }, 1500); // end setTimeout
 }
 
 // Select all chats
